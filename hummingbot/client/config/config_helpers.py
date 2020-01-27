@@ -21,20 +21,17 @@ import shutil
 
 from hummingbot.client.config.config_var import ConfigVar
 from hummingbot.client.config.global_config_map import global_config_map
-from hummingbot.client.liquidity_bounty.liquidity_bounty_config_map import liquidity_bounty_config_map
 from hummingbot.client.settings import (
     GLOBAL_CONFIG_PATH,
     TEMPLATE_PATH,
     CONF_FILE_PATH,
     CONF_POSTFIX,
     CONF_PREFIX,
-    LIQUIDITY_BOUNTY_CONFIG_PATH,
     TOKEN_ADDRESSES_FILE_PATH,
 )
 from hummingbot.core.utils.async_utils import safe_ensure_future
 from hummingbot.client.config.config_crypt import (
     encrypt_n_save_config_value,
-    decrypt_config_value,
     encrypted_config_file_exists
 )
 
@@ -221,13 +218,12 @@ def read_configs_from_yml(strategy_file_path: Optional[str] = None):
                     logging.getLogger().error(f"Cannot find corresponding config to key {key} in template.")
                     continue
 
+                # Skip this step since the values are not saved in the yml file
+                if cvar.is_secure:
+                    continue
+
                 val_in_file = data.get(key)
                 cvar.value = parse_cvar_value(cvar, val_in_file)
-                if cvar.is_secure:
-                    if encrypted_config_file_exists(cvar):
-                        password = in_memory_config_map.get("password").value
-                        if password is not None:
-                            cvar.value = decrypt_config_value(cvar, password)
                 if val_in_file is not None and not cvar.validate(cvar.value):
                     # Instead of raising an exception, simply skip over this variable and wait till the user is prompted
                     logging.getLogger().error("Invalid value %s for config variable %s" % (val_in_file, cvar.key))
@@ -246,9 +242,7 @@ def read_configs_from_yml(strategy_file_path: Optional[str] = None):
                                       exc_info=True)
 
     load_yml_into_cm(GLOBAL_CONFIG_PATH, join(TEMPLATE_PATH, "conf_global_TEMPLATE.yml"), global_config_map)
-    load_yml_into_cm(LIQUIDITY_BOUNTY_CONFIG_PATH,
-                     join(TEMPLATE_PATH, "conf_liquidity_bounty_TEMPLATE.yml"),
-                     liquidity_bounty_config_map)
+
     if strategy_file_path:
         strategy_template_path = get_strategy_template_path(current_strategy)
         load_yml_into_cm(join(CONF_FILE_PATH, strategy_file_path), strategy_template_path, strategy_config_map)

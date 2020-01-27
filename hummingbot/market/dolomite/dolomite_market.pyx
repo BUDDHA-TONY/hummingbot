@@ -398,6 +398,10 @@ cdef class DolomiteMarket(MarketBase):
     cdef c_cancel(self, str trading_pair, str client_order_id):
         safe_ensure_future(self.cancel_order(client_order_id))
 
+    cdef c_stop_tracking_order(self, str order_id):
+        if order_id in self._in_flight_orders:
+            del self._in_flight_orders[order_id]
+
     async def cancel_all(self, timeout_seconds: float) -> List[CancellationResult]:
         results = []
         cancellation_queue = self._in_flight_orders.copy()
@@ -511,8 +515,9 @@ cdef class DolomiteMarket(MarketBase):
             try:
                 await self.api_request("GET", ACCOUNT_INFO_ROUTE.replace(':address', self._wallet.address))
             except Exception:
-                self.logger().info(
-                    f"No Dolomite account for {self._wallet.address}. Create an account on the exchange at dolomite.io")
+                self.logger().warning(f"No Dolomite account for {self._wallet.address}.")
+                self.logger().warning(f"Create an account on the exchange at https://dolomite.io by either: ")
+                self.logger().warning(f"1) submitting a trade if you are located OUTSIDE the US or 2) creating an account if you are located WITHIN the US")
                 return NetworkStatus.NOT_CONNECTED
         except asyncio.CancelledError:
             raise
