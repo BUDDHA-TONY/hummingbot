@@ -17,6 +17,7 @@ KEYFILE_POSTFIX = ".json"
 ENCYPTED_CONF_PREFIX = "encrypted_"
 ENCYPTED_CONF_POSTFIX = ".json"
 GLOBAL_CONFIG_PATH = "conf/conf_global.yml"
+TRADE_FEES_CONFIG_PATH = "conf/conf_fee_overrides.yml"
 TOKEN_ADDRESSES_FILE_PATH = realpath(join(__file__, "../../wallet/ethereum/erc20_tokens.json"))
 DEFAULT_KEY_FILE_PATH = "conf/"
 DEFAULT_LOG_FILE_PATH = "logs/"
@@ -30,20 +31,17 @@ EXCHANGES = {
     "bamboo_relay",
     "binance",
     "coinbase_pro",
-    "ddex",
     "huobi",
     "liquid",
-    "idex",
     "radar_relay",
     "dolomite",
     "bittrex",
+    "kucoin",
     "bitcoin_com"
 }
 
 DEXES = {
     "bamboo_relay",
-    "ddex",
-    "idex",
     "radar_relay",
     "dolomite"
 }
@@ -55,11 +53,10 @@ EXAMPLE_PAIRS = {
     "binance": "ZRX-ETH",
     "bitcoin_com": "ETH-BCH",
     "bittrex": "ZRX-ETH",
+    "kucoin": "ETH-USDT",
     "coinbase_pro": "ETH-USDC",
-    "ddex": "ZRX-WETH",
     "dolomite": "WETH-DAI",
     "huobi": "ETH-USDT",
-    "idex": "ZRX-ETH",
     "liquid": "ETH-USD",
     "radar_relay": "ZRX-WETH",
 }
@@ -69,11 +66,10 @@ EXAMPLE_ASSETS = {
     "binance": "ZRX",
     "bitcoin_com": "BCH",
     "bittrex": "ZRX",
+    "kucoin": "ETH",
     "coinbase_pro": "ETH",
-    "ddex": "ZRX",
     "dolomite": "LRC",
     "huobi": "eth",
-    "idex": "ETH",
     "liquid": "ETH",
     "radar_relay": "ZRX",
 }

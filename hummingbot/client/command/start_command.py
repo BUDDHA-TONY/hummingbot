@@ -71,9 +71,7 @@ class StartCommand:
 
         self._initialize_notifiers()
 
-        ExchangeRateConversion.get_instance().start()
         strategy_name = in_memory_config_map.get("strategy").value
-        self.init_reporting_module()
         self._notify(f"\n  Status check complete. Starting '{strategy_name}' strategy...")
         safe_ensure_future(self.start_market_making(strategy_name), loop=self.ev_loop)
 
